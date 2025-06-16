@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRouter);
-const PORT = 5000;
+const PORT = process.env.PORT
 
 // Configuración de multer
 const storage = multer.diskStorage({
@@ -28,12 +28,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Conexión a MongoDB
-mongoose.connect("mongodb://localhost:27017/periodico");
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "Error de conexión a MongoDB:"));
-db.once("open", () => {
-  console.log("Conectado a MongoDB");
-});
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("Conectado a MongoDB Atlas");
+        app.listen(PORT, () => console.log(`Servidor escuchando en el puerto ${PORT}`));
+    })
+    .catch(err => console.error("Error al conectar a MongoDB:", err));
+
 
 // Modelo de artículo
 const Article = require('./models/article');
