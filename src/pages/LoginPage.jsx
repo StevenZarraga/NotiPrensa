@@ -1,20 +1,15 @@
-// frontend/src/pages/LoginPage.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-
-  const { login } = useAuth();
-
-  // 1. AÑADIMOS EL ESTADO PARA LA VISIBILIDAD DE LA CONTRASEÑA
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,61 +20,60 @@ export default function LoginPage() {
         password,
       });
       login(response.data.token);
-      
-      alert('¡Inicio de sesión exitoso!');
       navigate('/admin');
-
     } catch (err) {
       setError('Nombre de usuario o contraseña incorrectos.');
     }
   };
 
   return (
-    <div className="flex items-center justify-center mt-20">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center">Iniciar Sesión</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="username" className="text-sm font-medium text-gray-700">Usuario</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="password"  className="text-sm font-medium text-gray-700">Contraseña</label>
-            {/* 2. ENVOLVEMOS EL INPUT Y EL BOTÓN PARA POSICIONARLOS */}
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Iniciar Sesión
+          </h2>
+          <h3 className="text-center font-style: italic">Sólo Personal DORCI-Prensa</h3>
+        </div>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="username" className="sr-only">Usuario</label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Nombre de usuario"
+              />
+            </div>
             <div className="relative">
+              <label htmlFor="password"  className="sr-only">Contraseña</label>
               <input
                 id="password"
-                // 3. EL TIPO DEL INPUT AHORA ES DINÁMICO
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Contraseña"
               />
-              {/* 4. AÑADIMOS EL BOTÓN DE TOGGLE */}
               <button
-                type="button" // Importante para que el botón no envíe el formulario
-                onClick={() => setShowPassword(!showPassword)} // Cambia el estado de true a false
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-600"
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-600 hover:text-gray-900"
               >
                 {showPassword ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
           </div>
-          
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
-          
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Entrar
             </button>

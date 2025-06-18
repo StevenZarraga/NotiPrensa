@@ -1,5 +1,3 @@
-// frontend/src/pages/RegisterPage.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +7,9 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [registrationKey, setRegistrationKey] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-
-  // 1. ESTADOS SEPARADOS PARA CADA CAMPO DE CONTRASEÑA
   const [showPassword, setShowPassword] = useState(false);
   const [showRegKey, setShowRegKey] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +31,7 @@ export default function RegisterPage() {
     <div className="flex items-center justify-center mt-20">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">Registrar Nuevo Administrador</h1>
-        <h1 className="text-1x1 text-center">Sólo personal DORCI</h1>
+        <h3 className="text-center font-style: italic">Sólo Personal DORCI-Prensa</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="username" className="text-sm font-medium text-gray-700">Usuario</label>
@@ -73,9 +69,7 @@ export default function RegisterPage() {
               </button>
             </div>
           </div>
-          
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
-
           <div>
             <button type="submit" className="w-full flex justify-center py-2 px-4 border rounded-md text-white bg-green-600 hover:bg-green-700">
               Registrar

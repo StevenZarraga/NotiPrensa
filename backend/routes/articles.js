@@ -1,14 +1,14 @@
-const { protect } = require('../middleware/authMiddleware');
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
-const Article = require("../models/Article");
+const multer = require('multer');
+const path = require('path');
+const Article = require('../models/Article.js');
+const { protect } = require('../middleware/authMiddleware.js');
 
-// Configuración de multer (movida aquí para mantener todo encapsulado)
+// Configuración de Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -16,42 +16,40 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// RUTA GET: Obtener todos los artículos
-router.get("/", async (req, res) => {
+// --- RUTA GET (TODOS LOS ARTÍCULOS)
+router.get('/', async (req, res) => {
   try {
-    const articles = await Article.find().sort({ createdAt: -1 });
+    const articles = await Article.find().populate('categories', 'name').sort({ createdAt: -1 });
     res.json(articles);
   } catch (err) {
     res.status(500).json({ message: "Error al obtener los artículos." });
   }
 });
 
-// RUTA GET Articulo Individual
+// --- RUTA GET (UN SOLO ARTÍCULO) MODIFICADA ---
 router.get('/:id', async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id);
-    
+    const article = await Article.findById(req.params.id).populate('categories', 'name');
     if (!article) {
       return res.status(404).json({ message: 'Artículo no encontrado' });
     }
-    
-    res.json(article); // Enviamos el artículo encontrado
+    res.json(article);
   } catch (error) {
-    console.error(error);
-    // Este error puede ocurrir si el formato del ID es inválido
     res.status(500).json({ message: 'Error en el servidor al buscar el artículo' });
   }
 });
 
-// RUTA POST: Crear un nuevo artículo
+
+// --- RUTA POST (CREAR ARTÍCULO)
 router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
-    const { title, content, author } = req.body;
+    const { title, content, author, categories } = req.body;
     
     const newArticle = new Article({
       title,
       content,
       author,
+      categories: categories ? JSON.parse(categories) : [],
       image: req.file ? `/uploads/${req.file.filename}` : null
     });
 
@@ -63,11 +61,17 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   }
 });
 
-//Ruta PUT: Actualizar articulos
+
+// --- RUTA PUT (ACTUALIZAR ARTÍCULO)
 router.put('/:id', protect, upload.single('image'), async (req, res) => {
   try {
-    const { title, content, author } = req.body;
-    const updatedData = { title, content, author };
+    const { title, content, author, categories } = req.body;
+    const updatedData = { 
+      title, 
+      content, 
+      author, 
+      categories: categories ? JSON.parse(categories) : [] 
+    };
 
     if (req.file) {
       updatedData.image = `/uploads/${req.file.filename}`;
@@ -82,7 +86,6 @@ router.put('/:id', protect, upload.single('image'), async (req, res) => {
     if (!updatedArticle) {
       return res.status(404).json({ message: 'No se encontró el artículo para actualizar' });
     }
-
     res.json(updatedArticle);
   } catch (err) {
     console.error(err);
@@ -90,22 +93,18 @@ router.put('/:id', protect, upload.single('image'), async (req, res) => {
   }
 });
 
-//Ruta DELETE: Eliminar articulos
+
+// RUTA DELETE
 router.delete('/:id', protect, async (req, res) => {
   try {
     const article = await Article.findByIdAndDelete(req.params.id);
-
     if (!article) {
       return res.status(404).json({ message: 'No se encontró el artículo' });
     }
-
     res.json({ message: 'Artículo eliminado exitosamente' });
-
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: 'Error en el servidor al intentar eliminar el artículo' });
   }
 });
-
 
 module.exports = router;

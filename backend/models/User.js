@@ -1,5 +1,3 @@
-// backend/models/User.js
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -17,9 +15,7 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-// Middleware para encriptar la contraseña ANTES de guardar
 UserSchema.pre('save', async function(next) {
-  // Solo encriptamos si la contraseña es nueva o ha sido modificada
   if (!this.isModified('password')) {
     return next();
   }
@@ -29,15 +25,8 @@ UserSchema.pre('save', async function(next) {
   next();
 });
 
-// ==========================================================
-// **LA PARTE CLAVE A CORREGIR**
-// Añadimos el método para comparar contraseñas a las instancias del modelo.
-// Es "methods" (en plural), no "method". Este es un error común.
-// ==========================================================
 UserSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-
-// Exportamos el modelo
 module.exports = mongoose.model('User', UserSchema);

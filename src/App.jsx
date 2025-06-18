@@ -2,26 +2,24 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 
-// Importar Páginas y Componentes
 import HomePage from "./pages/HomePage.jsx";
 import EditorPage from "./pages/EditorPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ArticleDetailPage from "./pages/ArticleDetailPage.jsx";
 
 export default function App() {
   const { user, logout } = useAuth();
 
   return (
     <Router>
-      <nav className="bg-gray-100 p-4 shadow-md flex justify-between items-center">
-        {/* Enlaces de la izquierda */}
+      <nav className="bg-green-300 p-4 shadow-md flex justify-between items-center">
         <div>
           <Link to="/" className="mr-6 font-bold text-gray-800 hover:text-indigo-600 transition-colors">
             Inicio
           </Link>
-          {/* Mostramos estos enlaces solo si el usuario ha iniciado sesión */}
           {user && (
             <>
               <Link to="/admin" className="mr-6 text-gray-700 hover:text-indigo-600 transition-colors">Admin</Link>
@@ -29,8 +27,6 @@ export default function App() {
             </>
           )}
         </div>
-        
-        {/* Enlaces de la derecha */}
         <div>
           {user ? (
             <div className="flex items-center">
@@ -54,9 +50,10 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          
+          <Route path="/article/:id" element={<ArticleDetailPage />} />
 
           {/* --- RUTAS PROTEGIDAS --- */}
-          {/* Envolvemos las rutas que queremos proteger con nuestro componente */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/editor" element={<EditorPage />} />
