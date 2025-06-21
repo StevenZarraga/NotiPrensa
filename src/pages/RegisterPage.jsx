@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+// NUEVO: Leemos la variable de entorno para la URL del backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +18,8 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      // MODIFICADO: Se usa la variable de entorno para la petición de registro.
+      await axios.post(`${API_BASE_URL}/api/auth/register`, {
         username,
         password,
         registrationKey,

@@ -1,7 +1,13 @@
+// En: src/pages/EditorPage.jsx
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { capitalizeWords } from '../utils/textUtils.js';
+
+// NUEVO: Leemos la variable de entorno y la guardamos en una constante.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function EditorPage() {
   const [title, setTitle] = useState("");
@@ -22,7 +28,8 @@ export default function EditorPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories");
+        // MODIFICADO: Usamos la nueva constante para construir la URL.
+        const response = await axios.get(`${API_BASE_URL}/api/categories`);
         setAllCategories(response.data);
       } catch (error) {
         console.error("Error al obtener las categorías:", error);
@@ -30,6 +37,7 @@ export default function EditorPage() {
     };
     fetchCategories();
   }, []);
+
   useEffect(() => {
     const resetForm = () => {
         setTitle('');
@@ -41,7 +49,8 @@ export default function EditorPage() {
 
     if (isEditMode) {
       setIsLoading(true);
-      axios.get(`http://localhost:5000/api/articles/${id}`)
+      // MODIFICADO: Usamos la nueva constante aquí también.
+      axios.get(`${API_BASE_URL}/api/articles/${id}`)
         .then(response => {
           const { title, content, author, categories } = response.data;
           setTitle(title);
@@ -71,8 +80,9 @@ export default function EditorPage() {
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) return;
     try {
+      // MODIFICADO: Usamos la nueva constante aquí.
       const response = await axios.post(
-        "http://localhost:5000/api/categories",
+        `${API_BASE_URL}/api/categories`,
         { name: newCategoryName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -102,9 +112,10 @@ export default function EditorPage() {
       }
     };
 
+    // MODIFICADO: Construimos la URL usando la constante.
     const url = isEditMode 
-      ? `http://localhost:5000/api/articles/${id}` 
-      : "http://localhost:5000/api/articles";
+      ? `${API_BASE_URL}/api/articles/${id}` 
+      : `${API_BASE_URL}/api/articles`;
     
     const method = isEditMode ? 'put' : 'post';
 
@@ -121,6 +132,7 @@ export default function EditorPage() {
   if (isLoading) return <div className="p-8 text-center font-bold">Cargando editor...</div>;
 
   return (
+    // ... tu JSX no necesita cambiar, se queda exactamente igual ...
     <div className="p-4 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
         {isEditMode ? 'Editando Artículo' : 'Crear un Nuevo Artículo'}
@@ -151,7 +163,7 @@ export default function EditorPage() {
                   onChange={() => handleCategoryChange(category._id)}
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                 />
-                <span className="text-gray-700">{category.name}</span>
+                <span className="text-gray-700">{capitalizeWords(category.name)}</span>
               </label>
             ))}
           </div>

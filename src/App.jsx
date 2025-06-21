@@ -15,30 +15,35 @@ export default function App() {
 
   return (
     <Router>
-      <nav className="bg-green-300 p-4 shadow-md flex justify-between items-center">
+      <header className="bg-green-200 py-2 shadow-sm">
+        <Link to="/" className="flex justify-center">
+          <img src="/logo-ofic.png" alt="Logo de la Oficina" className="h-36 w-[600px]" />
+        </Link>
+      </header>
+      <nav className="bg-[#0D6425] p-4 shadow-md flex justify-between items-center">
         <div>
-          <Link to="/" className="mr-6 font-bold text-gray-800 hover:text-indigo-600 transition-colors">
+          <Link to="/" className="mr-6 font-bold text-white hover:text-indigo-600 transition-colors">
             Inicio
           </Link>
           {user && (
             <>
-              <Link to="/admin" className="mr-6 text-gray-700 hover:text-indigo-600 transition-colors">Admin</Link>
-              <Link to="/editor" className="text-gray-700 hover:text-indigo-600 transition-colors">Nuevo Artículo</Link>
+              <Link to="/admin" className="mr-6 font-bold text-white hover:text-indigo-600 transition-colors">Admin</Link>
+              <Link to="/editor" className="font-bold text-white hover:text-indigo-600 transition-colors">Nuevo Artículo</Link>
             </>
           )}
         </div>
         <div>
           {user ? (
             <div className="flex items-center">
-              <span className="mr-4 text-gray-800">Hola, {user.username}!</span>
+              <span className="mr-4 font-bold text-white">Hola, {user.username}!</span>
               <button onClick={logout} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors">
                 Cerrar Sesión
               </button>
             </div>
           ) : (
             <>
-              <Link to="/login" className="mr-4 text-gray-700 hover:text-indigo-600 transition-colors">Login</Link>
-              <Link to="/register" className="text-gray-700 hover:text-indigo-600 transition-colors">Registrar</Link>
+              <Link to="/login" className="mr-4 text-white hover:text-indigo-600 transition-colors">Login</Link>
+              <Link to="/register" className="text-white hover:text-indigo-600 transition-colors">Registrar</Link>
             </>
           )}
         </div>

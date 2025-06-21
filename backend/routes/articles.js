@@ -16,11 +16,38 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// --- RUTA GET (TODOS LOS ARTÍCULOS)
+// --- RUTA GET (TODOS LOS ARTÍCULOS) ---
+// MODIFICADA PARA ACEPTAR PAGINACIÓN
 router.get('/', async (req, res) => {
   try {
-    const articles = await Article.find().populate('categories', 'name').sort({ createdAt: -1 });
-    res.json(articles);
+    // 1. Leemos los parámetros de la URL. Si no vienen, usamos valores por defecto.
+    const page = parseInt(req.query.page) || 1; // Página actual, por defecto la 1
+    const limit = parseInt(req.query.limit) || 6; // Artículos por página, por defecto 6
+
+    // 2. Calculamos cuántos documentos debemos "saltar" para llegar a la página correcta.
+    // Para la página 1 no saltamos nada (1-1)*6=0. Para la página 2, saltamos 6 (2-1)*6=6.
+    const skip = (page - 1) * limit;
+
+    // 3. Hacemos dos consultas a la base de datos en paralelo para ser más eficientes:
+    const [articles, totalArticles] = await Promise.all([
+      // Consulta A: Trae solo los artículos de la página actual.
+      Article.find()
+        .populate('categories', 'name')
+        .sort({ createdAt: -1 })
+        .limit(limit) // Aplica el límite de artículos por página
+        .skip(skip),   // Salta los artículos de las páginas anteriores
+      
+      // Consulta B: Cuenta el número total de artículos que hay en la base de datos.
+      Article.countDocuments()
+    ]);
+
+    // 4. Devolvemos un objeto con los artículos y la información de paginación.
+    res.json({
+      articles,
+      totalPages: Math.ceil(totalArticles / limit), // Calculamos el total de páginas
+      currentPage: page
+    });
+    
   } catch (err) {
     res.status(500).json({ message: "Error al obtener los artículos." });
   }

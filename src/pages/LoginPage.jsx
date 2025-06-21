@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
+// NUEVO: Leemos la variable de entorno para la URL del backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +18,8 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      // MODIFICADO: Se usa la variable de entorno para la petición de login.
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password,
       });
