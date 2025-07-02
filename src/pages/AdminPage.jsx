@@ -4,7 +4,6 @@ import AdminArticleRow from '../components/AdminArticleRow.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { capitalizeWords } from '../utils/textUtils.js';
 
-// Definimos la constante de la URL base
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function AdminPage() {
@@ -16,16 +15,10 @@ export default function AdminPage() {
     const fetchData = async () => {
       try {
         const [articlesRes, categoriesRes] = await Promise.all([
-          // Aunque AdminPage no necesita paginación, ahora debe consumir la ruta paginada.
           axios.get(`${API_BASE_URL}/api/articles`),
           axios.get(`${API_BASE_URL}/api/categories`)
         ]);
-
-        // --- LA CORRECCIÓN ESTÁ AQUÍ ---
-        // Extraemos el array 'articles' del objeto de respuesta.
         setArticles(articlesRes.data.articles); 
-        // ---
-
         setCategories(categoriesRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);

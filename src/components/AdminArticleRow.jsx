@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // <-- 1. Importar Link
+import { Link } from 'react-router-dom';
 
 export default function AdminArticleRow({ article, onDelete }) {
   return (

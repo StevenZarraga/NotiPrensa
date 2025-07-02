@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-// NUEVO: Leemos la variable de entorno para la URL del backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function LoginPage() {
@@ -18,7 +17,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      // MODIFICADO: Se usa la variable de entorno para la petición de login.
       const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password,
@@ -77,7 +75,7 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-700 hover:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Entrar
             </button>

@@ -1,5 +1,3 @@
-// En: src/pages/HomePage.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ArticleCard from "../components/ArticleCard.jsx";
@@ -12,14 +10,10 @@ export default function HomePage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // --- NUEVOS ESTADOS PARA LA PAGINACIÓN ---
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  // ---
 
   useEffect(() => {
-    // La carga de categorías no cambia.
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/categories/active`);
@@ -32,28 +26,22 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    // --- LÓGICA DE CARGA MODIFICADA ---
     const fetchArticles = async (pageToFetch) => {
       setLoading(true);
       let url;
 
-      // Si hay una categoría seleccionada, la paginación se desactiva temporalmente
-      // y se muestran todos los artículos de esa categoría.
       if (selectedCategory) {
         url = `${API_BASE_URL}/api/categories/${selectedCategory}/articles`;
       } else {
-        // Si no, se piden los artículos paginados.
         url = `${API_BASE_URL}/api/articles?page=${pageToFetch}&limit=6`;
       }
 
       try {
         const response = await axios.get(url);
         if (selectedCategory) {
-          // Si es por categoría, la respuesta es un array simple.
           setArticles(response.data);
-          setTotalPages(0); // No hay paginación por categoría por ahora.
+          setTotalPages(0); 
         } else {
-          // Si es la carga general, la respuesta es un objeto con datos de paginación.
           setArticles(response.data.articles);
           setTotalPages(response.data.totalPages);
           setCurrentPage(response.data.currentPage);
@@ -65,31 +53,26 @@ export default function HomePage() {
         setLoading(false);
       }
     };
-    // ---
 
     fetchArticles(currentPage);
-  }, [selectedCategory, currentPage]); // Se ejecuta cuando cambia la categoría o la página actual
-
-  // --- NUEVA FUNCIÓN PARA CAMBIAR DE PÁGINA ---
+  }, [selectedCategory, currentPage]);
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
-  // ---
 
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-4 text-center tracking-tight">
-          Periódico Digital
+        <h1 className="text-2xl font-bold italic text-gray-900 mb-4 text-center tracking-tight">
+          Filtrar por etiquetas:
         </h1>
         
         <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {/* Botones de categorías (sin cambios en su lógica) */}
           <button
             onClick={() => { setSelectedCategory(null); setCurrentPage(1); }}
-            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${!selectedCategory ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`}
+            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${!selectedCategory ? 'bg-green-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`}
           >
             Todos
           </button>
@@ -97,7 +80,7 @@ export default function HomePage() {
             <button
               key={category._id}
               onClick={() => { setSelectedCategory(category._id); setCurrentPage(1); }}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${selectedCategory === category._id ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`}
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${selectedCategory === category._id ? 'bg-green-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'}`}
             >
               {capitalizeWords(category.name)}
             </button>
@@ -118,7 +101,6 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* --- SECCIÓN DE PAGINACIÓN NUEVA --- */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center mt-10 space-x-4">
                 <button
@@ -140,7 +122,6 @@ export default function HomePage() {
                 </button>
               </div>
             )}
-            {/* --- FIN DE LA SECCIÓN --- */}
           </>
         )}
       </div>
