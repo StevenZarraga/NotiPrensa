@@ -1,6 +1,4 @@
-// En: backend/server.js
-
-require('dotenv').config(); // <-- Esta línea es clave para que lea el .env
+require('dotenv').config(); 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -23,12 +21,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 5000;
 
-// --- INICIO DE LA MODIFICACIÓN ---
-
-// Se reemplaza la cadena de conexión local por la variable de entorno de Atlas
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        // Podemos cambiar el mensaje para que sea más claro
         console.log("Conectado a la base de datos de MongoDB Atlas"); 
         app.listen(PORT, '0.0.0.0', () => {
         console.log(`Servidor corriendo en el puerto ${PORT} y accesible en la red`);
@@ -36,13 +30,9 @@ mongoose.connect(process.env.MONGO_URI)
     })
     .catch(err => console.error("Error al conectar a MongoDB:", err));
 
-// --- FIN DE LA MODIFICACIÓN ---
-
-
 app.use("/api/articles", articlesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/categories', categoriesRouter);
-
 
 const deleteOrphanedCategories = async () => {
   console.log('Ejecutando tarea de limpieza de categorías huérfanas...');
